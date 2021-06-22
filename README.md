@@ -120,44 +120,42 @@ The file `config/admin.php` contains an array of configurations, you can find th
 
 
 
-## Contributors
- This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="graphs/contributors"><img src="https://opencollective.com/laravel-admin/contributors.svg?width=890&button=false" /></a>
- ## Backers
- Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/laravel-admin#backer)]
- <a href="https://opencollective.com/laravel-admin#backers" target="_blank"><img src="https://opencollective.com/laravel-admin/backers.svg?width=890"></a>
- ## Sponsors
- Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/laravel-admin#sponsor)]
- <a href="https://opencollective.com/laravel-admin/sponsor/0/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/1/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/2/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/3/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/4/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/5/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/6/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/7/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/8/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/laravel-admin/sponsor/9/website" target="_blank"><img src="https://opencollective.com/laravel-admin/sponsor/9/avatar.svg"></a>
+## Changes
+ 1.method sanitizeInput() in src\Form\Field.php change as:
+```
+protected function sanitizeInput($input, $column)
+{
+    if ($this instanceof Field\MultipleSelect) {
+        $value = Arr::get($input, $column);
+        Arr::set($input, $column, array_filter($value, function($val){
+            return $val !== '' && $val !== null && $val !== false;
+        }));
+    }
+    return $input;
+}
+```
+    purpose: submit form can be access when checkbox select 0 and rule contains required
+    
+ 2.method ajax() in src\Form\Field\Select.php
+    change select2's delay time of ajax request from 250ms to 500ms
+    
+ 3.insert error tips into resources/views/form.blade.php line 12:
+```
+@foreach($errors->getBags() as $bags)
+    <div class="alert alert-danger">{{$bags->first()}}</div>
+@endforeach
+```
+    
+ 4.in order to use alioss and support full url with domain make some changes in src\Form\Field\Image.php -> prepare():
+```
+if(isset(config('filesystems.disks.' . config('filesystems.default'))['remote_url'])){
+    $remoteUrl = config('filesystems.disks.' . config('filesystems.default'))['remote_url'];
+    $path = rtrim($remoteUrl, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $path;
+}//add domain before return path if config remote_url
 
-Other
-------------
-`laravel-admin` based on following plugins or services:
-
-+ [Laravel](https://laravel.com/)
-+ [AdminLTE](https://adminlte.io/)
-+ [Datetimepicker](http://eonasdan.github.io/bootstrap-datetimepicker/)
-+ [font-awesome](http://fontawesome.io)
-+ [moment](http://momentjs.com/)
-+ [Google map](https://www.google.com/maps)
-+ [Tencent map](http://lbs.qq.com/)
-+ [bootstrap-fileinput](https://github.com/kartik-v/bootstrap-fileinput)
-+ [jquery-pjax](https://github.com/defunkt/jquery-pjax)
-+ [Nestable](http://dbushell.github.io/Nestable/)
-+ [toastr](http://codeseven.github.io/toastr/)
-+ [X-editable](http://github.com/vitalets/x-editable)
-+ [bootstrap-number-input](https://github.com/wpic/bootstrap-number-input)
-+ [fontawesome-iconpicker](https://github.com/itsjavi/fontawesome-iconpicker)
-+ [sweetalert2](https://github.com/sweetalert2/sweetalert2)
+return $path;
+```
+ 
 
 License
 ------------
