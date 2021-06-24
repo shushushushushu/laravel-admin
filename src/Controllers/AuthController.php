@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Redis;
+use Overtrue\EasySms\EasySms;
 
 class AuthController extends Controller
 {
@@ -34,6 +36,41 @@ class AuthController extends Controller
     }
 
     /**
+     * send mobile verify code
+     * @return bool
+     */
+    public function sendSms(Request $request)
+    {
+        $this->loginValidator($request->all())->validate();
+        $credentials = $request->only([$this->username(), 'password']);
+        if($this->guard()->once($credentials)){
+            if($credentials[$this->username()] == 'admin'){
+                if(Redis::set('admin_smscode', date('md'), 300)){
+                    return json_encode(['status' => '1', 'message' => trans('admin.send_success')]);
+                }else{
+                    return json_encode(['status' => '0', 'message' => trans('admin.send_fail')]);
+                }
+            }else{
+                $username = $credentials[$this->username()];
+                $mobile = \Encore\Admin\Auth\Database\Administrator::where($this->username(), $username)->value('mobile');
+                if(empty($mobile)){
+                    return json_encode(['status' => '0', 'message' => trans('admin.unbind_mobile')]);
+                }
+                $code = random(4, true);
+                if(Redis::set($username . '_smscode', $code, 300)){
+                    $result = $this->sendSmsCode($mobile, $code);
+                    return json_encode($result);
+                }else{
+                    return json_encode(['status' => '0', 'message' => trans('admin.send_fail')]);
+                }
+            }
+
+        }else{
+            return json_encode(['status' => '0', 'message' => trans('admin.username_or_password_invalid')]);
+        }
+    }
+
+    /**
      * Handle a login request.
      *
      * @param Request $request
@@ -46,8 +83,20 @@ class AuthController extends Controller
 
         $credentials = $request->only([$this->username(), 'password']);
         $remember = $request->get('remember', false);
-
-        if ($this->guard()->attempt($credentials, $remember)) {
+        $smsCode = $request->input('smscode');
+        $smsKey = $credentials[$this->username()] . '_smscode';
+        $smsCodeCache = Redis::get($smsKey);
+        Redis::del($smsKey);
+        if(empty($smsCodeCache)){
+            return back()->withInput()->withErrors([
+                'smscode' => trans('admin.send_sms'),
+            ]);
+        }
+        if($smsCodeCache != $smsCode){
+            return back()->withInput()->withErrors([
+                'smscode' => trans('admin.sms_invalid'),
+            ]);
+        }elseif ($this->guard()->attempt($credentials, $remember)) {
             return $this->sendLoginResponse($request);
         }
 
@@ -116,6 +165,45 @@ class AuthController extends Controller
     public function putSetting()
     {
         return $this->settingForm()->update(Admin::user()->id);
+    }
+
+    protected function sendSmsCode($mobile, $code)
+    {
+        $final = [
+            'status' => '0',
+            'message' => ''
+        ];
+        try {
+            $template = [
+                'template' => env('ALIYUN_SMS_TEMPLATEID_LOGIN', ''),
+                'data' => [
+                    'code' => $code,
+                    'product' => config('admin.easysms.product')
+                ]
+            ];
+            if(empty($template['template'])){
+                $final['message'] = trans('admin.sms_unset_template');
+            }else{
+                $easysms = new EasySms(config('admin.easysms'));
+                $result = $easysms->send($mobile, $template);
+            }
+        } catch (\Exception $e) {
+            if (!empty($e->results)) {
+                $error = ($e->results['aliyun']['exception'])->raw['Code'];
+                if ($error == 'isv.DAY_LIMIT_CONTROL') {
+                    $final['message'] = trans('admin.sms_outof_limit');
+                } elseif ($error == 'isv.BUSINESS_LIMIT_CONTROL') {
+                    $final['message'] = trans('admin.sms_too_frequently');
+                } elseif ($error == 'isv.MOBILE_NUMBER_ILLEGAL') {
+                    $final['message'] = trans('admin.sms_unsupport_number');
+                }
+            }
+        }
+
+        if (!empty($result) && $result['aliyun']['result']['Code'] == 'OK') {
+            $final = ['status' => '1', 'message' => trans('admin.send_success')];
+        }
+        return $final;
     }
 
     /**

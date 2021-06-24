@@ -333,6 +333,7 @@ class Admin
 
             /* @var \Illuminate\Routing\Router $router */
             $router->get('auth/login', $authController.'@getLogin')->name('admin.login');
+            $router->post('auth/sendsms', $authController.'@sendSms');
             $router->post('auth/login', $authController.'@postLogin');
             $router->get('auth/logout', $authController.'@getLogout')->name('admin.logout');
             $router->get('auth/setting', $authController.'@getSetting')->name('admin.setting');
