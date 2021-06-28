@@ -157,37 +157,38 @@ return $path;
 ```
 5.login page add smscode verify using easy-sms
     These changes occurs in the tag 1.2.0 and some configuration is needed to make sure it works properly.
-    ①users table add a column：
-    ```
-    $table->char('mobile', 11);
-    ```
-    ②fill configurations of redis and the normal operation of the redis.
-    ③add configuration of easysms to admin.config:
-    ```
-    'easysms' => [
-        'timeout' => 5.0,
-        'length' => 4,
-        'expire' => 300,
-        'product' => '',
-        'default' => [
-            'strategy' => \Overtrue\EasySms\Strategies\OrderStrategy::class,
-            'gateways' => [
-                'aliyun'
-            ]
-        ],
 
+①users table add a column：
+```
+$table->char('mobile', 11);
+```
+②fill configurations of redis and the normal operation of the redis.
+
+③add configuration of easysms to admin.config:
+```
+'easysms' => [
+    'timeout' => 5.0,
+    'length' => 4,
+    'expire' => 300,
+    'product' => '',
+    'default' => [
+        'strategy' => \Overtrue\EasySms\Strategies\OrderStrategy::class,
         'gateways' => [
-            'errorlog' => [
-                'file' => '/tmp/easy-sms.log',
-            ],
-            'aliyun' => [
-                'access_key_id' => env('ALIYUN_ACCESS_KEY_ID', ''),
-                'access_key_secret' => env('ALIYUN_SECRET_ACCESS_KEY', ''),
-                'sign_name' => env('ALIYUN_SMS_SIGN_NAME', ''),
-            ]
+            'aliyun'
         ]
     ],
-    ```
+    'gateways' => [
+        'errorlog' => [
+            'file' => '/tmp/easy-sms.log',
+        ],
+        'aliyun' => [
+            'access_key_id' => env('ALIYUN_ACCESS_KEY_ID', ''),
+            'access_key_secret' => env('ALIYUN_SECRET_ACCESS_KEY', ''),
+            'sign_name' => env('ALIYUN_SMS_SIGN_NAME', ''),
+        ]
+    ]
+],
+```
     you need config some env in .env forexample 'access_key_id' and son on.
     For details, please see easysms official website
 
