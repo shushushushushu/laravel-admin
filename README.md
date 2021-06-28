@@ -165,6 +165,8 @@ $table->char('mobile', 11);
 ②fill configurations of redis and the normal operation of the redis.
 
 ③add configuration of easysms to admin.config:
+first add 'auth/sendsms' to "auth['excepts']" ensure interface 'auth/sendsms' not need auth,
+and second:
 ```
 'login_use_sms' => true,
 
