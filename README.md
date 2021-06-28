@@ -161,7 +161,8 @@ return $path;
     ```
     $table->char('mobile', 11);
     ```
-    ②add configuration of easysms to admin.config:
+    ②fill configurations of redis and the normal operation of the redis.
+    ③add configuration of easysms to admin.config:
     ```
     'easysms' => [
         'timeout' => 5.0,
