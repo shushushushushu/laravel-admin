@@ -166,6 +166,8 @@ $table->char('mobile', 11);
 
 ③add configuration of easysms to admin.config:
 ```
+'login_use_sms' => true,
+
 'easysms' => [
     'timeout' => 5.0,
     'length' => 4,
@@ -189,6 +191,7 @@ $table->char('mobile', 11);
     ]
 ],
 ```
+if set login_use_sms=false,sms will be disabled.
     you need config some env in .env forexample 'access_key_id' and son on.
     For details, please see easysms official website
 

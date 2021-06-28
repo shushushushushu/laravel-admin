@@ -397,6 +397,8 @@ return [
     'extensions' => [
 
     ],
+
+    'login_use_sms' => false,
     
     'easysms' => [
         'timeout' => 5.0,

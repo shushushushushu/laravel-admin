@@ -60,8 +60,8 @@
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
       </div>
 
+      @if($useSms)
       <div class="form-group has-feedback {!! !$errors->has('smscode') ?: 'has-error' !!}">
-
           @if($errors->has('smscode'))
               @foreach($errors->get('smscode') as $message)
                   <label class="control-label" for="inputError"><i class="fa fa-times-circle-o"></i>{{$message}}</label><br>
@@ -74,6 +74,7 @@
           </div>
           <div style="clear:both;"></div>
       </div>
+      @endif
 
       <div class="row">
         <div class="col-xs-8">
@@ -106,15 +107,20 @@
 <script src="{{ admin_asset("vendor/laravel-admin/AdminLTE/bootstrap/js/bootstrap.min.js")}}"></script>
 <!-- iCheck -->
 <script src="{{ admin_asset("vendor/laravel-admin/AdminLTE/plugins/iCheck/icheck.min.js")}}"></script>
+<script>
+  $(function () {
+      $('input').iCheck({
+          checkboxClass: 'icheckbox_square-blue',
+          radioClass: 'iradio_square-blue',
+          increaseArea: '20%' // optional
+      });
+  });
+</script>
+
+@if($useSms)
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
   $(function () {
-    $('input').iCheck({
-      checkboxClass: 'icheckbox_square-blue',
-      radioClass: 'iradio_square-blue',
-      increaseArea: '20%' // optional
-    });
-
     $('form').on('submit', function(){
         var username = $("input[name='username']").val();
         var password = $("input[name='password']").val();
@@ -178,22 +184,6 @@
       });
       return false;
   });
-  /*document.getElementById('smscode').onclick = function () {
-      var username = document.getElementById('username').value;
-      var password = document.getElementById('password').value;
-      $.post("{php echo url('utility/sms')}", {'verify':'smsCode', 'username':username, 'password':password}, function(data){
-          var data = JSON.parse(data);
-          if(data.status == 1)
-          {
-              settime(60);
-          }
-          else
-          {
-              util.message(data.message, '', 'error');
-          }
-      });
-      return false;
-  }*/
 
   //倒计时
   function settime(second) {
@@ -211,5 +201,6 @@
       }
   }
 </script>
+@endif
 </body>
 </html>

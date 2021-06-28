@@ -21,6 +21,13 @@ class AuthController extends Controller
      */
     protected $loginView = 'admin::login';
 
+    protected $useSms = false;
+
+    public function __construct()
+    {
+        $this->useSms = (boolean) config('admin.login_use_sms');
+    }
+
     /**
      * Show the login page.
      *
@@ -32,7 +39,7 @@ class AuthController extends Controller
             return redirect($this->redirectPath());
         }
 
-        return view($this->loginView);
+        return view($this->loginView, ['useSms' => $this->useSms]);
     }
 
     /**
@@ -41,6 +48,9 @@ class AuthController extends Controller
      */
     public function sendSms(Request $request)
     {
+        if(!$this->useSms){
+            return json_encode(['status' => '0', 'message' => trans('admin.sms_not_open')]);
+        }
         $this->loginValidator($request->all())->validate();
         $credentials = $request->only([$this->username(), 'password']);
         if($this->guard()->once($credentials)){
@@ -83,20 +93,23 @@ class AuthController extends Controller
 
         $credentials = $request->only([$this->username(), 'password']);
         $remember = $request->get('remember', false);
-        $smsCode = $request->input('smscode');
-        $smsKey = $credentials[$this->username()] . '_smscode';
-        $smsCodeCache = Redis::get($smsKey);
-        Redis::del($smsKey);
-        if(empty($smsCodeCache)){
-            return back()->withInput()->withErrors([
-                'smscode' => trans('admin.send_sms'),
-            ]);
+        if($this->useSms){
+            $smsCode = $request->input('smscode');
+            $smsKey = $credentials[$this->username()] . '_smscode';
+            $smsCodeCache = Redis::get($smsKey);
+            Redis::del($smsKey);
+            if(empty($smsCodeCache)){
+                return back()->withInput()->withErrors([
+                    'smscode' => trans('admin.send_sms'),
+                ]);
+            }
+            if($smsCodeCache != $smsCode){
+                return back()->withInput()->withErrors([
+                    'smscode' => trans('admin.sms_invalid'),
+                ]);
+            }
         }
-        if($smsCodeCache != $smsCode){
-            return back()->withInput()->withErrors([
-                'smscode' => trans('admin.sms_invalid'),
-            ]);
-        }elseif ($this->guard()->attempt($credentials, $remember)) {
+        if ($this->guard()->attempt($credentials, $remember)) {
             return $this->sendLoginResponse($request);
         }
 

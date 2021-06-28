@@ -31,6 +31,7 @@ class UserController extends AdminController
         $grid->column('id', 'ID')->sortable();
         $grid->column('username', trans('admin.username'));
         $grid->column('name', trans('admin.name'));
+        $grid->column('mobile', trans('admin.mobile'));
         $grid->column('roles', trans('admin.roles'))->pluck('name')->label();
         $grid->column('created_at', trans('admin.created_at'));
         $grid->column('updated_at', trans('admin.updated_at'));
@@ -66,6 +67,7 @@ class UserController extends AdminController
         $show->field('id', 'ID');
         $show->field('username', trans('admin.username'));
         $show->field('name', trans('admin.name'));
+        $show->field('mobile', trans('admin.mobile'));
         $show->field('roles', trans('admin.roles'))->as(function ($roles) {
             return $roles->pluck('name');
         })->label();
@@ -100,6 +102,9 @@ class UserController extends AdminController
             ->updateRules(['required', "unique:{$connection}.{$userTable},username,{{id}}"]);
 
         $form->text('name', trans('admin.name'))->rules('required');
+        $form->mobile('mobile', trans('admin.mobile'))
+            ->creationRules(['required', "unique:{$connection}.{$userTable}"])
+            ->updateRules(['required', "unique:{$connection}.{$userTable},mobile,{{id}}"]);
         $form->image('avatar', trans('admin.avatar'));
         $form->password('password', trans('admin.password'))->rules('required|confirmed');
         $form->password('password_confirmation', trans('admin.password_confirmation'))->rules('required')

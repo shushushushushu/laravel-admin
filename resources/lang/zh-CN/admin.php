@@ -7,6 +7,7 @@ return [
     'setting'               => '设置',
     'name'                  => '名称',
     'username'              => '用户名',
+    'mobile'                => '手机号',
     'password'              => '密码',
     'password_confirmation' => '确认密码',
     'remember_me'           => '记住我',
@@ -114,4 +115,5 @@ return [
     'sms_outof_limit'        => '验证码发送超限',
     'sms_too_frequently'     => '验证码发送频繁',
     'sms_unsupport_number'   => '暂不支持的手机号段',
+    'sms_not_open'           => '短信功能未开启',
 ];
