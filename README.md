@@ -63,7 +63,7 @@ Installation
 First, install laravel 5.5, and make sure that the database connection settings are correct.
 
 ```
-composer require encore/laravel-admin
+composer require shushushushushu/laravel-admin:^1.2.0
 ```
 
 Then run these commands to publish assets and config：
@@ -136,8 +136,16 @@ protected function sanitizeInput($input, $column)
 ```
     purpose: submit form can be access when checkbox select 0 and rule contains required
     
- 2.method ajax() in src\Form\Field\Select.php
+ 2.reform component 'Select':
+ 
+    ①method ajax() in src\Form\Field\Select.php
     change select2's delay time of ajax request from 250ms to 500ms
+    
+    ②change name of a hidden input and set value:
+    <input type="hidden" name="{{$name}}"/>
+    change as 
+    <input type="hidden" name="{{$name}}_hide" value="{{old($column, $value)}}"/>
+    that can get old value when select option list from ajax request,
     
  3.insert error tips into resources/views/form.blade.php line 12:
 ```
