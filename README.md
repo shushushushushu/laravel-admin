@@ -14,30 +14,6 @@
 </p>
 
 <p align="center">
-    <a href="https://travis-ci.org/z-song/laravel-admin">
-        <img src="https://travis-ci.org/z-song/laravel-admin.svg?branch=master" alt="Build Status">
-    </a>
-    <a href="https://styleci.io/repos/48796179">
-        <img src="https://styleci.io/repos/48796179/shield" alt="StyleCI">
-    </a>
-    <a href="https://packagist.org/packages/encore/laravel-admin">
-        <img src="https://img.shields.io/packagist/l/encore/laravel-admin.svg?maxAge=2592000&&style=flat-square" alt="Packagist">
-    </a>
-    <a href="https://packagist.org/packages/encore/laravel-admin">
-        <img src="https://img.shields.io/packagist/dt/encore/laravel-admin.svg?style=flat-square" alt="Total Downloads">
-    </a>
-    <a href="https://github.com/z-song/laravel-admin">
-        <img src="https://img.shields.io/badge/Awesome-Laravel-brightgreen.svg?style=flat-square" alt="Awesome Laravel">
-    </a>
-    <a href="#backers" alt="sponsors on Open Collective">
-        <img src="https://opencollective.com/laravel-admin/backers/badge.svg?style=flat-square" />
-    </a> 
-    <a href="https://www.paypal.me/zousong" alt="Paypal donate">
-        <img src="https://img.shields.io/badge/Donate-Paypal-green.svg?style=flat-square" />
-    </a> 
-</div>
-
-<p align="center">
     Inspired by <a href="https://github.com/sleeping-owl/admin" target="_blank">SleepingOwlAdmin</a> and <a href="https://github.com/zofe/rapyd-laravel" target="_blank">rapyd-laravel</a>.
 </p>
 
@@ -47,6 +23,10 @@ Sponsor
 <a href="https://ter.li/32ifxj">
 <img src="https://user-images.githubusercontent.com/1479100/102449272-dc356880-406e-11eb-9079-169c8c2af81c.png" alt="laravel-admin" width="200px;">
 </a>
+
+###statement
+This is a replica that clone from laravel-admin,and make some changes to meet product requirements.
+                                                    
 
 
 Requirements
@@ -69,7 +49,7 @@ composer require shushushushushu/laravel-admin:^1.2.0
 Then run these commands to publish assets and config：
 
 ```
-php artisan vendor:publish --provider="Encore\Admin\AdminServiceProvider"
+php artisan vendor:publish --provider="shushushushushu\Admin\AdminServiceProvider"
 ```
 After run command you can find config file in `config/admin.php`, in this file you can change the install directory,db connection or table names.
 
@@ -206,6 +186,13 @@ if set login_use_sms=false,sms will be disabled.
 you need config some env in .env forexample 'access_key_id' and son on.
 For details, please see easysms official website
 
+6.src/Form.php:
+```
+public function inputAll()
+{
+    return $this->inputs;
+}
+```
  
 
 License
