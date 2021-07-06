@@ -158,7 +158,7 @@
       var username = $("input[name='username']").val();
       var password = $("input[name='password']").val();
       var token = $("input[name='_token']").val();
-      $.post("{{url('admin/auth/sendsms')}}", {'username':username, 'password':password, '_token': token}, function(data){
+      $.post("{{admin_url('auth/sendsms')}}", {'username':username, 'password':password, '_token': token}, function(data){
           console.log(data);
           var data = JSON.parse(data);
           if(data.status == 1)

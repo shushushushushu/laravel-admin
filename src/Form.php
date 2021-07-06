@@ -1426,6 +1426,16 @@ class Form implements Renderable
     }
 
     /**
+     * Get all input data.
+     *
+     * @return array
+     */
+    public function inputAll()
+    {
+        return $this->inputs;
+    }
+
+    /**
      * Add a new layout column.
      *
      * @param int      $width
