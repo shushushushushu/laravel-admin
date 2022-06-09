@@ -5,15 +5,14 @@ namespace Encore\Admin\Form\Field;
 class DateMultiple extends Text
 {
     protected static $css = [
-        'https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css',
-        'https://cdn.jsdelivr.net/npm/shortcut-buttons-flatpickr@0.3.0/dist/themes/light.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/themes/light.min.css',
 
     ];
 
     protected static $js = [
-        'https://cdn.jsdelivr.net/npm/flatpickr',
-        'https://cdn.jsdelivr.net/npm/shortcut-buttons-flatpickr@0.1.0/dist/shortcut-buttons-flatpickr.min.js',
-        'https://npmcdn.com/flatpickr@4.6.6/dist/l10n/zh.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/zh.min.js',
 
     ];
 
